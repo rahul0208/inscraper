@@ -38,21 +38,21 @@ class Scraper:
             "http": proxy, "https": proxy
         }
         self.data = { # Data sets for each search engine
-            "bing": {
-                "url":  'https://www.bing.com/search?q=site%3Alinkedin.com%2Fin%2F+%22at+{COMPANY}%22&first={INDEX}',
-                "html": ["li", "class", "b_algo"],
-                "idx":  lambda x: x * 14
-            },
+            #"bing": {
+            #    "url":  'https://www.bing.com/search?q=site%3Alinkedin.com%2Fin%2F+%22at+{COMPANY}%22&first={INDEX}',
+            #    "html": ["li", "class", "b_algo"],
+            #    "idx":  lambda x: x * 14
+            #},
             "google": {
                 "url":  'https://www.google.com/search?q=site%3Alinkedin.com%2Fin%2F+%22at+{COMPANY}%22&start={INDEX}',
-                "html": ["h3", "class", "LC20lb"],
+                "html": ["cite","class","iUh30"], #["h3", "class", "LC20lb"],
                 "idx":  lambda x: x * 10
             },
-            "yahoo": {
-                "url":  'https://search.yahoo.com/search?p=site%3Alinkedin.com%2Fin%2F+%22at+{COMPANY}%22&b={INDEX}',
-                "html": ["a", "class", "ac-algo fz-l ac-21th lh-24"],
-                "idx":  lambda x: (x * 10) + 1
-            }
+            #"yahoo": {
+            #    "url":  'https://search.yahoo.com/search?p=site%3Alinkedin.com%2Fin%2F+%22at+{COMPANY}%22&b={INDEX}',
+            #    "html": ["a", "class", "ac-algo fz-l ac-21th lh-24"],
+            #    "idx":  lambda x: (x * 10) + 1
+            #}
         }
 
         # Keep track of current depth of each search engine
@@ -78,7 +78,7 @@ class Scraper:
         if se == 'bing':
             return re.sub(' (-|–|\xe2\x80\x93).*', '', data.findAll('a')[0].getText()) # re.search('((?<=>)[A-Z].+?) - ', str(data)).group(1)
 
-        return re.sub(' (-|–|\xe2\x80\x93).*', '', data.getText())
+        return data.getText() #re.sub('( › )', '/', data.getText())
 
     def __remove(self, data):
         # Remove Prefixes/Titles/Certs in names and clean
@@ -104,6 +104,7 @@ class Scraper:
                 if soup.findAll(search[0], {search[1]: search[2]}):
                     for person in soup.findAll(search[0], {search[1]: search[2]}):
                         name = self.__get_name(person, se)
+                        print(name)
                         names.append(self.__remove(name))
 
                 else:
